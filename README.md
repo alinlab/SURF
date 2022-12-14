@@ -1,45 +1,33 @@
 # SURF: Semi-supervised Reward Learning with Data Augmentation for Feedback-efficient Preference-based RL (ICLR 2022)
-Our implementation is based on the official codebase of PEBBLE (https://github.com/pokaxpoka/B_Pref).
+This branch is for running visual control tasks of the paper. Our implementation is based on the official codebase of PEBBLE (https://github.com/pokaxpoka/B_Pref) and DrQ-v2 (https://github.com/facebookresearch/drqv2).
 
 ## Requirements
-- Python 3.6
+- Python 3.8
 - [MuJoCo](http://mujoco.org/) 2.0
 
 ## Install
 ```
-conda env create -f conda_env.yml
-conda activate bpref
-pip install -e .[docs,tests,extra]
-cd custom_dmcontrol
-pip install -e .
-cd ../custom_dmc2gym
-pip install -e .
-cd ..
-pip install git+https://github.com/rlworkgroup/metaworld.git@master#egg=metaworld
-pip install pybullet
+conda env create -f conda_env_pixel.yml
+conda activate drqv2
+conda install -y pytorch==1.9.0 torchvision==0.10.0 torchaudio==0.9.0 cudatoolkit=11.3 -c pytorch -c conda-forge
+
+# for using DM Control Suite instead of MetaWorld
+pip uninstall -y metaworld numpy
+pip install numpy==1.19.2
 ```
 
-## Run experiments 
-## MetaWorld-v2 (Hammer):
-
-### PEBBLE
+## Run experiments on DeepMind Control Suite:
+### Walker walk
 ```
-CUDA_VISIBLE_DEVICES=0 python train_PEBBLE.py env=metaworld_hammer-v2 seed=12345 agent.params.actor_lr=0.0003 agent.params.critic_lr=0.0003 gradient_update=1 activation=tanh num_unsup_steps=9000 num_train_steps=2000000 agent.params.batch_size=512 double_q_critic.params.hidden_dim=256 double_q_critic.params.hidden_depth=3 diag_gaussian_actor.params.hidden_dim=256 diag_gaussian_actor.params.hidden_depth=3 reward_update=10 num_interact=5000 max_feedback=10000 reward_batch=50 feed_type=1 teacher_beta=-1 teacher_gamma=1 teacher_eps_mistake=0 teacher_eps_skip=0 teacher_eps_equal=0
+CUDA_VISIBLE_DEVICES=0 EGL_DEVICE_ID=0 python pixel_train_PEBBLE_semi.py reward_stack=True reward_lr=3e-5 time_shift=2 time_crop=2 task=walker_walk seed=1 num_train_frames=1000000 num_unsup_frames=0 num_interact=30000 max_feedback=200 reward_batch=10 reward_update=20 inv_label_ratio=5 threshold_u=0.99 lambda_u=0.1
 ```
 
-### SURF
+### Quadruped walk
 ```
-CUDA_VISIBLE_DEVICES=0 python train_PEBBLE_semi_dataaug.py env=metaworld_hammer-v2 seed=12345 agent.params.actor_lr=0.0003 agent.params.critic_lr=0.0003 gradient_update=1 activation=tanh num_unsup_steps=9000 num_train_steps=2000000 agent.params.batch_size=512 double_q_critic.params.hidden_dim=256 double_q_critic.params.hidden_depth=3 diag_gaussian_actor.params.hidden_dim=256 diag_gaussian_actor.params.hidden_depth=3 reward_update=20 num_interact=5000 max_feedback=10000 reward_batch=50 feed_type=1 teacher_beta=-1 teacher_gamma=1 teacher_eps_mistake=0 teacher_eps_skip=0 teacher_eps_equal=0 threshold_u=0.99 mu=4 inv_label_ratio=10
-```
-
-## DeepMind Control Suite (Walker walk):
-
-### PEBBLE
-```
-CUDA_VISIBLE_DEVICES=0 python train_PEBBLE.py  env=walker_walk seed=12345 agent.params.actor_lr=0.0005 agent.params.critic_lr=0.0005 gradient_update=1 activation=tanh num_unsup_steps=9000 num_train_steps=500000 num_interact=20000 max_feedback=100 reward_batch=10 reward_update=50 feed_type=1 teacher_beta=-1 teacher_gamma=1 teacher_eps_mistake=0 teacher_eps_skip=0 teacher_eps_equal=0
+CUDA_VISIBLE_DEVICES=0 EGL_DEVICE_ID=0 python pixel_train_PEBBLE_semi.py reward_stack=True reward_lr=3e-5 time_shift=2 time_crop=2 task=quadruped_walk seed=1 num_train_frames=1000000 num_unsup_frames=0 num_interact=30000 max_feedback=1000 reward_batch=50 reward_update=20 inv_label_ratio=5 threshold_u=0.99 lambda_u=0.1
 ```
 
-### SURF
+### Cheetah run
 ```
-CUDA_VISIBLE_DEVICES=0 python train_PEBBLE_semi_dataaug.py env=walker_walk seed=12345 agent.params.actor_lr=0.0005 agent.params.critic_lr=0.0005 gradient_update=1 activation=tanh num_unsup_steps=9000 num_train_steps=500000 num_interact=20000 max_feedback=100 reward_batch=10 inv_label_ratio=100 reward_update=1000 feed_type=1 teacher_beta=-1 teacher_gamma=1 teacher_eps_mistake=0 teacher_eps_skip=0 teacher_eps_equal=0 threshold_u=0.99 mu=4
+CUDA_VISIBLE_DEVICES=1 EGL_DEVICE_ID=1 python pixel_train_PEBBLE_semi.py reward_stack=True reward_lr=3e-5 time_shift=5 time_crop=5 task=cheetah_run seed=1 num_train_frames=1000000 num_unsup_frames=0 num_interact=20000 max_feedback=1000 reward_batch=25 reward_update=20 inv_label_ratio=5 threshold_u=0.99
 ```
