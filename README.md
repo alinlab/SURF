@@ -1,5 +1,5 @@
 # SURF: Semi-supervised Reward Learning with Data Augmentation for Feedback-efficient Preference-based RL (ICLR 2022)
-Our implementation is based on the official codebase of PEBBLE (https://github.com/pokaxpoka/B_Pref).
+Our implementation is based on the official codebase of PEBBLE (https://github.com/pokaxpoka/B_Pref). If you want to run visual control tasks, please move to the [pixel](https://github.com/alinlab/SURF/tree/pixel) branch.
 
 ## Requirements
 - Python 3.6
